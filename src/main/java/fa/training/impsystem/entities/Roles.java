@@ -18,7 +18,7 @@ public class Roles extends BaseEntity{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "roles")
     private Set<Account> accounts;
 
-    public Roles() {
+    public Roles(String role) {
 
     }
 
