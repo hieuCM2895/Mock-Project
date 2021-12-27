@@ -1,35 +1,66 @@
 package fa.training.impsystem.entities;
 
-import fa.training.impsystem.consts.MessageConst;
+import fa.training.impsystem.consts.RegexConst;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
 public class Users extends BaseEntity{
 
     @Id
-    @Column(name = "user_name")
-    private String userName;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long id;
 
-    @NotBlank(message = MessageConst.INVALID_NAME)
-    @Column(name = "full_name", nullable = false)
-    private String fullName;
+    @Column(name = "first_name", nullable = false)
+    @Pattern(regexp = RegexConst.REGEX_NAME, message = RegexConst.FORMAT_FIRST_NAME)
+    private String firstName;
 
-    @NotBlank(message = MessageConst.INVALID_PHONE)
-    @Column(nullable = false, unique = true)
-    private String phone;
+    @Column(name = "last_name", nullable = false)
+    @Pattern(regexp = RegexConst.REGEX_NAME, message = RegexConst.FORMAT_LAST_NAME)
+    private String lastName;
 
-    @Email(message = MessageConst.INVALID_EMAIL)
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", unique = true, nullable = false)
+    @Pattern(regexp = RegexConst.REGEX_EMAIL, message = RegexConst.FORMAT_EMAIL)
     private String email;
 
-    @Email(message = MessageConst.INVALID_PASSWORD)
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
+    @Pattern(regexp = RegexConst.REGEX_PASSWORD, message = RegexConst.FORMAT_PASSWORD)
     private String password;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "enable")
+    private boolean enable = true;
+
+    @Column(name = "account_non_locked")
+    private boolean accountNonLocked = true;
+
+    @Column(name = "failed_attempt")
+    private int failedAttempt = 0;
+
+    @Column(name = "lock_time")
+    private Date lockTime;
+
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "role_id"))
+    private Collection<Roles> roles;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "users")
     private Set<Recruitment> recruitments;
@@ -43,87 +74,156 @@ public class Users extends BaseEntity{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "users")
     private Set<Account> accounts;
 
-    public Users() {
-
+    public Long getId() {
+        return id;
     }
 
-    public Users(String userName, String fullName, String phone, String email, String password) {
-        this.userName = userName;
-        this.fullName = fullName;
-        this.phone = phone;
-        this.email = email;
-        this.password = password;
+    public Users setId(Long id) {
+        this.id = id;
+        return this;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public Users setFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public Users setLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public Users setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public Users setPassword(String password) {
         this.password = password;
+        return this;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public Users setAddress(String address) {
+        this.address = address;
+        return this;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public Users setPhone(String phone) {
+        this.phone = phone;
+        return this;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public Users setEnable(boolean enable) {
+        this.enable = enable;
+        return this;
+    }
+
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    public Users setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+        return this;
+    }
+
+    public int getFailedAttempt() {
+        return failedAttempt;
+    }
+
+    public Users setFailedAttempt(int failedAttempt) {
+        this.failedAttempt = failedAttempt;
+        return this;
+    }
+
+    public Date getLockTime() {
+        return lockTime;
+    }
+
+    public Users setLockTime(Date lockTime) {
+        this.lockTime = lockTime;
+        return this;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public Users setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
+        return this;
+    }
+
+    public Collection<Roles> getRoles() {
+        return roles;
+    }
+
+    public Users setRoles(Collection<Roles> roles) {
+        this.roles = roles;
+        return this;
     }
 
     public Set<Recruitment> getRecruitments() {
         return recruitments;
     }
 
-    public void setRecruitments(Set<Recruitment> recruitments) {
+    public Users setRecruitments(Set<Recruitment> recruitments) {
         this.recruitments = recruitments;
+        return this;
     }
 
     public Set<Interview> getInterviews() {
         return interviews;
     }
 
-    public void setInterviews(Set<Interview> interviews) {
+    public Users setInterviews(Set<Interview> interviews) {
         this.interviews = interviews;
+        return this;
     }
 
     public Set<Report> getReports() {
         return reports;
     }
 
-    public void setReports(Set<Report> reports) {
+    public Users setReports(Set<Report> reports) {
         this.reports = reports;
+        return this;
     }
 
     public Set<Account> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(Set<Account> accounts) {
+    public Users setAccounts(Set<Account> accounts) {
         this.accounts = accounts;
+        return this;
     }
 }
